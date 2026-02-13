@@ -9,6 +9,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 import sys
 import pandas as pd
+import openpyxl
 
 
 class Ui_ApplicationsPage(object):
@@ -72,6 +73,8 @@ class Ui_ApplicationsPage(object):
         self.VIT1Button.setText(_translate("ApplicationsPage", "VIT1 Records"))
         self.VIT2Button.setText(_translate("ApplicationsPage", "VIT2 Records"))
         self.ReturnButton.setText(_translate("ApplicationsPage", "Return to Preferences"))
+
+
 
 def load_data():
     """Drive/Yerel dosyadan veriyi çeker"""
@@ -142,6 +145,38 @@ def handle_mentor_undefined():
     else:
         print(f"Hata: '{target_col}' sütunu bulunamadı.")
 
+def handle_vit1_records():                  ##vit1 ve vit2 kayitlari yok henuz, duzenle 
+    """6- VIT1 Donemi Kayitlari"""
+    df = load_data()
+    if df.empty:
+        return
+    
+    # Sütun isimlerini temizle (boşlukları sil)
+    df.columns = df.columns.astype(str).str.strip()
+    target_col = 'Basvuru Donemi'
+
+    if target_col in df.columns:
+        # Sadece VIT1 olanları filtrele
+        filtered_df = df[df[target_col].astype(str).str.upper() == "VIT1"]
+        display_on_table(filtered_df)
+    else:
+        print(f"Hata: '{target_col}' sütunu bulunamadı.")      
+
+def handle_vit2_records():
+    """7- VIT2 Donemi Kayitlari"""
+    df = load_data()
+    if df.empty:
+        return
+    
+    df.columns = df.columns.astype(str).str.strip()
+    target_col = 'Basvuru Donemi'
+
+    if target_col in df.columns:
+        # Sadece VIT2 olanları filtrele
+        filtered_df = df[df[target_col].astype(str).str.upper() == "VIT2"]
+        display_on_table(filtered_df)
+    else:
+        print(f"Hata: '{target_col}' sütunu bulunamadı.") 
    
 
 if __name__ == "__main__":
@@ -156,5 +191,7 @@ if __name__ == "__main__":
     # Mentor butonlarını bağlama
     ui.mentorDefinedButton.clicked.connect(handle_mentor_defined)
     ui.mentorUndefinedButton.clicked.connect(handle_mentor_undefined)
+    ui.VIT1Button.clicked.connect(handle_vit1_records)
+    ui.VIT2Button.clicked.connect(handle_vit2_records)
     ApplicationsPage.show()
     sys.exit(app.exec())
