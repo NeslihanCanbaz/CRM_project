@@ -31,5 +31,9 @@ def set_table_data(window, file_name) :
             if rows [i] [j] is None:
                 continue
             item = QtWidgets. QTableWidgetItem()
-            item. setText(str(rows[i][j]))
+            cell_value = rows[i][j]
+            if cell_value is None or str(cell_value).strip().lower() == "none":
+                item.setText("")  # Hücre gerçekten boş kalsın
+            else:
+                item.setText(str(cell_value))
             window.ApplicationsTable. setItem(i - 1, j, item)    

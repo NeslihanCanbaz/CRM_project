@@ -1,22 +1,40 @@
 from PyQt6 import QtWidgets 
 import sys
-from py.applications import Ui_ApplicationsPage
+
+# Arayüz ve Mantık Importları
+from py.interview import Ui_Form as Ui_InterviewPage
+from backend.interview_logic import search_by_text, filter_submitted, filter_received
 from backend.set_table_data import set_table_data
 
+# 1. Uygulamayı bir kez başlat
 app = QtWidgets.QApplication(sys.argv)
 
-# 1. Create the actual QWidget (or QMainWindow) container
+# 2. Mülakatlar Penceresini Kur
 MainWindow = QtWidgets.QWidget() 
-
-# 2. Instantiate the UI setup class
-ui = Ui_ApplicationsPage()  
-
-# 3. Apply the UI to the container
+ui = Ui_InterviewPage()  
 ui.setupUi(MainWindow)
 
-set_table_data(ui, "Basvurular.xlsx")
+# 3. Verileri Yükle (Mulakatlar.xlsx)
+set_table_data(ui, "Mulakatlar.xlsx")
 
-# 4. Show the container, NOT the ui class
+# 4. BUTON BAĞLANTILARI
+# Arama butonu
+ui.btnsearch_2.clicked.connect(lambda: search_by_text(ui.ApplicationsTable, ui.btntxtsearch))
+
+# Proje Gönderilmiş butonu
+ui.btnProjectSubmitted.clicked.connect(lambda: filter_submitted(ui.ApplicationsTable))
+
+# Geri dön butonu
+def geri_don():
+    print("Mülakatlar ekranı gizleniyor, tercihlere dönülüyor...")
+    MainWindow.hide()
+    # Eğer tercih menüsü kodun hazırsa buraya: tercih_penceresi.show()
+
+ui.btnReturntoPreference.clicked.connect(geri_don)
+
+# Kapat butonu
+ui.btnclose.clicked.connect(MainWindow.close)
+
+# 5. Pencereyi Göster ve Uygulamayı Döngüye Sok
 MainWindow.show()
-
 sys.exit(app.exec())
