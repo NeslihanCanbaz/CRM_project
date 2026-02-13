@@ -52,6 +52,7 @@ ui.label_2.setText("")
 
 # Buton bağlantıları
 ui.pushButton.clicked.connect(login_kontrol)
+
 ui.pushButton_2.clicked.connect(ana_pencere.close)
 
 ana_pencere.show()
