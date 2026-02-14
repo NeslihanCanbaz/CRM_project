@@ -82,3 +82,7 @@ if __name__ == "__main__":
     pencere = LoginSistemi()
     pencere.show()
     sys.exit(app.exec())
+
+
+
+    
