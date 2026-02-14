@@ -7,17 +7,38 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-import sys
-import pandas as pd
-import openpyxl
 
 
 class Ui_ApplicationsPage(object):
     def setupUi(self, ApplicationsPage):
         ApplicationsPage.setObjectName("ApplicationsPage")
         ApplicationsPage.resize(700, 400)
-        self.verticalLayout = QtWidgets.QVBoxLayout(ApplicationsPage)
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.gridLayout_2 = QtWidgets.QGridLayout(ApplicationsPage)
+        self.gridLayout_2.setObjectName("gridLayout_2")
+        self.gridLayout = QtWidgets.QGridLayout()
+        self.gridLayout.setObjectName("gridLayout")
+        self.allAplicationsButton = QtWidgets.QPushButton(parent=ApplicationsPage)
+        self.allAplicationsButton.setObjectName("allAplicationsButton")
+        self.gridLayout.addWidget(self.allAplicationsButton, 0, 0, 1, 1)
+        self.comboBox_filters = QtWidgets.QComboBox(parent=ApplicationsPage)
+        self.comboBox_filters.setObjectName("comboBox_filters")
+        self.comboBox_filters.addItem("")
+        self.comboBox_filters.addItem("")
+        self.comboBox_filters.addItem("")
+        self.comboBox_filters.addItem("")
+        self.comboBox_filters.addItem("")
+        self.gridLayout.addWidget(self.comboBox_filters, 1, 0, 1, 1)
+        self.gridLayout_2.addLayout(self.gridLayout, 1, 0, 1, 1)
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.ReturnButton = QtWidgets.QPushButton(parent=ApplicationsPage)
+        self.ReturnButton.setAutoRepeatInterval(100)
+        self.ReturnButton.setObjectName("ReturnButton")
+        self.horizontalLayout.addWidget(self.ReturnButton)
+        self.closeButton = QtWidgets.QPushButton(parent=ApplicationsPage)
+        self.closeButton.setObjectName("closeButton")
+        self.horizontalLayout.addWidget(self.closeButton)
+        self.gridLayout_2.addLayout(self.horizontalLayout, 3, 0, 1, 2)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         self.searchInput = QtWidgets.QLineEdit(parent=ApplicationsPage)
@@ -26,158 +47,41 @@ class Ui_ApplicationsPage(object):
         self.searchButton = QtWidgets.QPushButton(parent=ApplicationsPage)
         self.searchButton.setObjectName("searchButton")
         self.horizontalLayout_3.addWidget(self.searchButton)
-        self.verticalLayout.addLayout(self.horizontalLayout_3)
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.allApplicationsButton = QtWidgets.QPushButton(parent=ApplicationsPage)
-        self.allApplicationsButton.setObjectName("allApplicationsButton")
-        self.horizontalLayout_2.addWidget(self.allApplicationsButton)
-        self.mentorDefinedButton = QtWidgets.QPushButton(parent=ApplicationsPage)
-        self.mentorDefinedButton.setObjectName("mentorDefinedButton")
-        self.horizontalLayout_2.addWidget(self.mentorDefinedButton)
-        self.mentorUndefinedButton = QtWidgets.QPushButton(parent=ApplicationsPage)
-        self.mentorUndefinedButton.setObjectName("mentorUndefinedButton")
-        self.horizontalLayout_2.addWidget(self.mentorUndefinedButton)
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.gridLayout_2.addLayout(self.horizontalLayout_3, 0, 0, 1, 2)
         self.ApplicationsTable = QtWidgets.QTableWidget(parent=ApplicationsPage)
         self.ApplicationsTable.setColumnCount(7)
         self.ApplicationsTable.setObjectName("ApplicationsTable")
         self.ApplicationsTable.setRowCount(0)
-        self.verticalLayout.addWidget(self.ApplicationsTable)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.VIT1Button = QtWidgets.QPushButton(parent=ApplicationsPage)
-        self.VIT1Button.setObjectName("VIT1Button")
-        self.horizontalLayout.addWidget(self.VIT1Button)
-        self.VIT2Button = QtWidgets.QPushButton(parent=ApplicationsPage)
-        self.VIT2Button.setObjectName("VIT2Button")
-        self.horizontalLayout.addWidget(self.VIT2Button)
-        self.ReturnButton = QtWidgets.QPushButton(parent=ApplicationsPage)
-        self.ReturnButton.setAutoRepeatInterval(100)
-        self.ReturnButton.setObjectName("ReturnButton")
-        self.horizontalLayout.addWidget(self.ReturnButton)
-        self.verticalLayout.addLayout(self.horizontalLayout)
+        self.gridLayout_2.addWidget(self.ApplicationsTable, 2, 0, 1, 2)
+        self.formLayout = QtWidgets.QFormLayout()
+        self.formLayout.setObjectName("formLayout")
+        self.mentorDefinedButton = QtWidgets.QPushButton(parent=ApplicationsPage)
+        self.mentorDefinedButton.setObjectName("mentorDefinedButton")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.ItemRole.LabelRole, self.mentorDefinedButton)
+        self.mentorUndefinedButton = QtWidgets.QPushButton(parent=ApplicationsPage)
+        self.mentorUndefinedButton.setObjectName("mentorUndefinedButton")
+        self.formLayout.setWidget(1, QtWidgets.QFormLayout.ItemRole.LabelRole, self.mentorUndefinedButton)
+        self.gridLayout_2.addLayout(self.formLayout, 1, 1, 1, 1)
+
         self.retranslateUi(ApplicationsPage)
         QtCore.QMetaObject.connectSlotsByName(ApplicationsPage)
 
-      
-        
     def retranslateUi(self, ApplicationsPage):
         _translate = QtCore.QCoreApplication.translate
         ApplicationsPage.setWindowTitle(_translate("ApplicationsPage", "Form"))
-        self.searchInput.setPlaceholderText(_translate("ApplicationsPage", "search..."))
+        self.allAplicationsButton.setText(_translate("ApplicationsPage", "All Applications"))
+        self.comboBox_filters.setItemText(0, _translate("ApplicationsPage", "--- Select Filter ---"))
+        self.comboBox_filters.setItemText(1, _translate("ApplicationsPage", "Duplicate Records"))
+        self.comboBox_filters.setItemText(2, _translate("ApplicationsPage", "Previous VIT Check"))
+        self.comboBox_filters.setItemText(3, _translate("ApplicationsPage", "Unique VIT Records"))
+        self.comboBox_filters.setItemText(4, _translate("ApplicationsPage", "Filtered Applications"))
+        self.ReturnButton.setText(_translate("ApplicationsPage", "Return to Preferences"))
+        self.closeButton.setText(_translate("ApplicationsPage", "close"))
+        self.searchInput.setPlaceholderText(_translate("ApplicationsPage", "search by name..."))
         self.searchButton.setText(_translate("ApplicationsPage", "search"))
-        self.allApplicationsButton.setText(_translate("ApplicationsPage", "All Applications"))
         self.mentorDefinedButton.setText(_translate("ApplicationsPage", "Mentor Meeting Defined"))
         self.mentorUndefinedButton.setText(_translate("ApplicationsPage", "Mentor Interview Undefined"))
-        self.VIT1Button.setText(_translate("ApplicationsPage", "VIT1 Records"))
-        self.VIT2Button.setText(_translate("ApplicationsPage", "VIT2 Records"))
-        self.ReturnButton.setText(_translate("ApplicationsPage", "Return to Preferences"))
 
-
-
-def load_data():
-    """Drive/Yerel dosyadan veriyi çeker"""
-    try:
-        # Dosya adını ve yolunu kendi dosyanla değiştir (Örn: 'basvurular.xlsx')
-        df = pd.read_excel("Basvurular.xlsx") 
-        return df
-    except Exception as e:
-        print(f"Hata: Dosya okunamadi: {e}")
-        return pd.DataFrame()
-
-def display_on_table(df):
-    """Pandas DataFrame'i ApplicationsTable isimli tabloya basar"""
-    ui.ApplicationsTable.setRowCount(0)
-    if df.empty:
-        return
-
-    ui.ApplicationsTable.setRowCount(len(df))
-    ui.ApplicationsTable.setColumnCount(len(df.columns))
-
-# Sütun başlıklarını ayarla
-    ui.ApplicationsTable.setHorizontalHeaderLabels(df.columns.astype(str))
-
-    for row_index, row_data in enumerate(df.values):
-        for col_index, value in enumerate(row_data):
-            ui.ApplicationsTable.setItem(row_index, col_index, QtWidgets.QTableWidgetItem(str(value)))
-
-def handle_search():
-    print("Arama butonuna basıldı!")
-    """1. Ara Butonu: İsim Soyisim içinde arama yapar"""
-    search_text = ui.searchInput.text().strip().lower()
-    df = load_data()
-
-    if not search_text or df.empty:
-        return
-
-# Sütun adın 'Ad Soyad' değilse burayı güncelle!
-    filtered_df = df[df['Adınız Soyadınız'].str.contains(search_text, case=False, na=False)]
-    display_on_table(filtered_df)
-
-def handle_all_applications():
-    """2. Tüm Başvurular Butonu: Tüm listeyi getirir"""
-    df = load_data()
-    display_on_table(df)
-
-def handle_mentor_defined():
-    """3- Mentor Gorusmesi Tanimlananlar"""
-    df = load_data()
-    if df.empty:
-        return
-    target_col = 'Mentor gorusmesi'
-    if target_col in df.columns:
-        filtered_df = df[df[target_col].astype(str).str.upper() == "OK"]        
-        display_on_table(filtered_df)
-    else:
-        print(f"Hata: '{target_col}' sütunu bulunamadı.")
-
-def handle_mentor_undefined():
-    """4- Mentor Gorusmesi Tanimlanmayanlar"""
-    df = load_data()
-    if df.empty:
-        return
-    target_col = 'Mentor gorusmesi'
-    if target_col in df.columns:
-    # Mentor sütunu boş (NaN) olan veya boş metin içeren kayıtları getirir.
-        filtered_df = df[(df[target_col].astype(str).str.upper() == "ATANMADI") | (df[target_col].isna())]        
-        display_on_table(filtered_df)
-    else:
-        print(f"Hata: '{target_col}' sütunu bulunamadı.")
-
-def handle_vit1_records():                  ##vit1 ve vit2 kayitlari yok henuz, duzenle 
-    """6- VIT1 Donemi Kayitlari"""
-    df = load_data()
-    if df.empty:
-        return
-    
-    # Sütun isimlerini temizle (boşlukları sil)
-    df.columns = df.columns.astype(str).str.strip()
-    target_col = 'Basvuru Donemi'
-
-    if target_col in df.columns:
-        # Sadece VIT1 olanları filtrele
-        filtered_df = df[df[target_col].astype(str).str.upper() == "VIT1"]
-        display_on_table(filtered_df)
-    else:
-        print(f"Hata: '{target_col}' sütunu bulunamadı.")      
-
-def handle_vit2_records():
-    """7- VIT2 Donemi Kayitlari"""
-    df = load_data()
-    if df.empty:
-        return
-    
-    df.columns = df.columns.astype(str).str.strip()
-    target_col = 'Basvuru Donemi'
-
-    if target_col in df.columns:
-        # Sadece VIT2 olanları filtrele
-        filtered_df = df[df[target_col].astype(str).str.upper() == "VIT2"]
-        display_on_table(filtered_df)
-    else:
-        print(f"Hata: '{target_col}' sütunu bulunamadı.") 
-   
 
 if __name__ == "__main__":
     import sys
@@ -185,13 +89,5 @@ if __name__ == "__main__":
     ApplicationsPage = QtWidgets.QWidget()
     ui = Ui_ApplicationsPage()
     ui.setupUi(ApplicationsPage)
-    ui.retranslateUi(ApplicationsPage)
-    ui.searchButton.clicked.connect(handle_search)
-    ui.allApplicationsButton.clicked.connect(handle_all_applications)
-    # Mentor butonlarını bağlama
-    ui.mentorDefinedButton.clicked.connect(handle_mentor_defined)
-    ui.mentorUndefinedButton.clicked.connect(handle_mentor_undefined)
-    ui.VIT1Button.clicked.connect(handle_vit1_records)
-    ui.VIT2Button.clicked.connect(handle_vit2_records)
     ApplicationsPage.show()
     sys.exit(app.exec())
