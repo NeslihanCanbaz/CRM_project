@@ -1,23 +1,26 @@
 import sys
 import os
+import pandas as pd
 from PyQt6 import QtWidgets, QtCore
 
-# --- DOSYA YOLU AYARI ---
-mevcut_dizin = os.path.dirname(os.path.abspath(__file__))
-ust_dizin = os.path.join(mevcut_dizin, "..", "py")
-sys.path.append(ust_dizin)
+# --- DİZİN AYARLARI ---
+MEVCUT_DIZIN = os.path.dirname(os.path.abspath(__file__)) 
 
-# Tasarımları içeri aktarma (Dosyalar geldikçe burayı güncelleyeceksin)
+# Excel CRM_project ana klasöründe
+EXCEL_YOLU = os.path.normpath(os.path.join(MEVCUT_DIZIN, "..", "Kullanicilar.xlsx"))
+
+# Tasarım dosyaları (py klasörü) CRM_project ana klasöründe
+TASARIM_DIZINI = os.path.normpath(os.path.join(MEVCUT_DIZIN, "..", "py"))
+
+# Python'un bu klasöre bakmasını sağla
+if TASARIM_DIZINI not in sys.path:
+    sys.path.append(TASARIM_DIZINI)
+
 try:
     from login import Ui_loginpage
-    # Arkadaşların sayfaları bitirince şuna benzer şekilde ekleyeceksin:
-    # from user_menu import Ui_PreferenceMenu
-    # from admin_menu import Ui_AdminMenu
 except ImportError:
-    print("HATA: Tasarım dosyaları bulunamadı!")
-
-# --- SAYFA YÖNETİCİSİ CLASS YAPISI ---
-# Kodun daha profesyonel ve hatasız çalışması için Class yapısı en iyisidir.
+    print(f"HATA: login.py bulunamadı! Aranan konum: {TASARIM_DIZINI}")
+    sys.exit()
 
 class LoginSistemi(QtWidgets.QMainWindow):
     def __init__(self):
@@ -25,64 +28,53 @@ class LoginSistemi(QtWidgets.QMainWindow):
         self.ui = Ui_loginpage()
         self.ui.setupUi(self)
         
-        # Pencere ayarları (İsteğe bağlı çerçevesiz pencere)
-        # self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
-
-        # Başlangıç temizliği
         self.ui.label_2.setText("")
-        self.ui.lineEdit_2.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password) # Şifreyi gizle
+        self.ui.lineEdit_2.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
 
-        # Buton Bağlantıları
         self.ui.pushButton.clicked.connect(self.login_kontrol)
         self.ui.pushButton_2.clicked.connect(self.close)
 
     def login_kontrol(self):
-        kullanici = self.ui.lineEdit.text().strip()
-        sifre = self.ui.lineEdit_2.text()
+        kullanici_input = self.ui.lineEdit.text().strip()
+        sifre_input = self.ui.lineEdit_2.text().strip()
 
-        # 1. Boşluk kontrolü
-        if not kullanici or not sifre:
-            self.mesaj_yaz("Lütfen tüm alanları doldurun!", "orange")
-            return
+        try:
+            df = pd.read_excel(EXCEL_YOLU)
+            df.columns = df.columns.str.strip()
 
-        # 2. Yönlendirme Mantığı
-        if kullanici == "admin" and sifre == "admin123":
-            self.mesaj_yaz("Admin girişi başarılı! Yönlendiriliyorsunuz...", "green")
-            QtCore.QTimer.singleShot(1000, self.ac_admin_menu) # 1 saniye sonra aç
+            sorgu = df[(df['kullanici'].astype(str) == kullanici_input) & 
+                       (df['parola'].astype(str) == sifre_input)]
 
-        elif kullanici == "user" and sifre == "user123":
-            self.mesaj_yaz("Giriş başarılı! Menü açılıyor...", "green")
-            QtCore.QTimer.singleShot(1000, self.ac_user_menu)
+            if not sorgu.empty:
+                yetki = str(sorgu.iloc[0]['yetki']).lower()
+                self.mesaj_yaz("Giriş Başarılı!", "green")
+                
+                if "admin" in yetki:
+                    QtCore.QTimer.singleShot(1000, self.ac_admin_menu)
+                else:
+                    QtCore.QTimer.singleShot(1000, self.ac_user_menu)
+            else:
+                self.mesaj_yaz("Hatalı kullanıcı adı veya şifre!", "red")
 
-        else:
-            self.mesaj_yaz("Kullanıcı adı veya şifre hatalı!", "red")
-            self.ui.lineEdit_2.clear()
+        except Exception as e:
+            self.mesaj_yaz("Sistem hatası!", "red")
+            print(f"Hata: {e}")
 
     def mesaj_yaz(self, mesaj, renk):
         self.ui.label_2.setText(mesaj)
         self.ui.label_2.setStyleSheet(f"color: {renk}; font-weight: bold;")
 
-    # --- SAYFA AÇMA FONKSİYONLARI ---
-
     def ac_user_menu(self):
-        self.hide() # Giriş ekranını gizle
-        print("USER: Preference-Menu açılıyor...")
-        # Bu kısma kendi hazırladığın Preference-Menu kodlarını bağlayacaksın
-        # self.yeni_pencere = UserMenuEkrani() 
-        # self.yeni_pencere.show()
+        self.hide()
+        print("Kullanıcı menüsü açılıyor...")
 
     def ac_admin_menu(self):
         self.hide()
-        print("ADMIN: Preference-Admin-Menu açılıyor...")
-        # Bu kısma arkadaşının hazırladığı Admin menüsü gelecek
+        print("Admin menüsü açılıyor...")
 
-# --- PROGRAMI BAŞLAT ---
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     pencere = LoginSistemi()
     pencere.show()
     sys.exit(app.exec())
-
-
-
     
