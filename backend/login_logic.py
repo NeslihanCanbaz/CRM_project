@@ -1,59 +1,84 @@
 import sys
 import os
-from PyQt6 import QtWidgets
+from PyQt6 import QtWidgets, QtCore
 
 # --- DOSYA YOLU AYARI ---
-# Bu kısım, 'login.py' dosyasını hangi klasörde olursa olsun bulmanı sağlar
 mevcut_dizin = os.path.dirname(os.path.abspath(__file__))
-# Eğer login.py dosyası 'py' klasöründeyse bir üst dizine çıkıp oraya bakıyoruz
 ust_dizin = os.path.join(mevcut_dizin, "..", "py")
 sys.path.append(ust_dizin)
 
+# Tasarımları içeri aktarma (Dosyalar geldikçe burayı güncelleyeceksin)
 try:
     from login import Ui_loginpage
+    # Arkadaşların sayfaları bitirince şuna benzer şekilde ekleyeceksin:
+    # from user_menu import Ui_PreferenceMenu
+    # from admin_menu import Ui_AdminMenu
 except ImportError:
-    print("HATA: login.py dosyası bulunamadı! Lütfen dosya konumunu kontrol edin.")
-    sys.exit()
+    print("HATA: Tasarım dosyaları bulunamadı!")
 
-# --- FONKSİYONLAR ---
+# --- SAYFA YÖNETİCİSİ CLASS YAPISI ---
+# Kodun daha profesyonel ve hatasız çalışması için Class yapısı en iyisidir.
 
-def login_kontrol():
-    # Kullanıcı adı ve şifreyi al
-    kullanici = ui.lineEdit.text().strip()
-    sifre = ui.lineEdit_2.text()
+class LoginSistemi(QtWidgets.QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_loginpage()
+        self.ui.setupUi(self)
+        
+        # Pencere ayarları (İsteğe bağlı çerçevesiz pencere)
+        # self.setWindowFlags(QtCore.Qt.WindowType.FramelessWindowHint)
 
-    # 1. Boşluk kontrolü
-    if not kullanici or not sifre:
-        ui.label_2.setText("Lütfen tüm alanları doldurun!")
-        ui.label_2.setStyleSheet("color: orange; font-size: 14px;")
-        return
+        # Başlangıç temizliği
+        self.ui.label_2.setText("")
+        self.ui.lineEdit_2.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password) # Şifreyi gizle
 
-    # 2. Şifre doğrulama (Hata aldığın kritik satır)
-    if kullanici == "admin" and sifre == "123456":
-        ui.label_2.setText("Giriş Başarılı!")
-        ui.label_2.setStyleSheet("color: green; font-weight: bold; font-size: 14px;")
-    else:
-        # Hatalı girişte en alttaki hata satırını güncelle
-        ui.label_2.setText("Kullanıcı adı veya şifre hatalı!")
-        ui.label_2.setStyleSheet("color: red; font-size: 14px;")
-        ui.lineEdit_2.clear()
+        # Buton Bağlantıları
+        self.ui.pushButton.clicked.connect(self.login_kontrol)
+        self.ui.pushButton_2.clicked.connect(self.close)
 
-# --- ANA PROGRAM ---
+    def login_kontrol(self):
+        kullanici = self.ui.lineEdit.text().strip()
+        sifre = self.ui.lineEdit_2.text()
 
-app = QtWidgets.QApplication(sys.argv)
-ana_pencere = QtWidgets.QMainWindow()
+        # 1. Boşluk kontrolü
+        if not kullanici or not sifre:
+            self.mesaj_yaz("Lütfen tüm alanları doldurun!", "orange")
+            return
 
-# Tasarımı yükle
-ui = Ui_loginpage()
-ui.setupUi(ana_pencere)
+        # 2. Yönlendirme Mantığı
+        if kullanici == "admin" and sifre == "admin123":
+            self.mesaj_yaz("Admin girişi başarılı! Yönlendiriliyorsunuz...", "green")
+            QtCore.QTimer.singleShot(1000, self.ac_admin_menu) # 1 saniye sonra aç
 
-# Başlangıçta hata satırı (label_2) boş olsun
-ui.label_2.setText("")
+        elif kullanici == "user" and sifre == "user123":
+            self.mesaj_yaz("Giriş başarılı! Menü açılıyor...", "green")
+            QtCore.QTimer.singleShot(1000, self.ac_user_menu)
 
-# Buton bağlantıları
-ui.pushButton.clicked.connect(login_kontrol)
+        else:
+            self.mesaj_yaz("Kullanıcı adı veya şifre hatalı!", "red")
+            self.ui.lineEdit_2.clear()
 
-ui.pushButton_2.clicked.connect(ana_pencere.close)
+    def mesaj_yaz(self, mesaj, renk):
+        self.ui.label_2.setText(mesaj)
+        self.ui.label_2.setStyleSheet(f"color: {renk}; font-weight: bold;")
 
-ana_pencere.show()
-sys.exit(app.exec())
+    # --- SAYFA AÇMA FONKSİYONLARI ---
+
+    def ac_user_menu(self):
+        self.hide() # Giriş ekranını gizle
+        print("USER: Preference-Menu açılıyor...")
+        # Bu kısma kendi hazırladığın Preference-Menu kodlarını bağlayacaksın
+        # self.yeni_pencere = UserMenuEkrani() 
+        # self.yeni_pencere.show()
+
+    def ac_admin_menu(self):
+        self.hide()
+        print("ADMIN: Preference-Admin-Menu açılıyor...")
+        # Bu kısma arkadaşının hazırladığı Admin menüsü gelecek
+
+# --- PROGRAMI BAŞLAT ---
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    pencere = LoginSistemi()
+    pencere.show()
+    sys.exit(app.exec())
