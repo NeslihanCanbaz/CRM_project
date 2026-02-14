@@ -28,4 +28,4 @@ def filter_received(table_widget):
     for row in range(table_widget.rowCount()):
         item = table_widget.item(row, 2) # C Sütunu: Projenin geliş tarihi
         is_empty = not (item and item.text().strip())
-        table_widget.setRowHidden(row, is_empty)
+        table_widget.setRowHidden(row, is_empty)a

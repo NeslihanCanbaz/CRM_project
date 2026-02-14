@@ -13,13 +13,74 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="1" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="allAplicationsButton">
+       <property name="text">
+        <string>All Applications</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="comboBox_filters">
+       <item>
+        <property name="text">
+         <string>--- Select Filter ---</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Duplicate Records</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Previous VIT Check</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Unique VIT Records</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Filtered Applications</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="ReturnButton">
+       <property name="text">
+        <string>Return to Preferences</string>
+       </property>
+       <property name="autoRepeatInterval">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
+        <string>close</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="0" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <widget class="QLineEdit" name="searchInput">
        <property name="placeholderText">
-        <string>search...</string>
+        <string>search by name...</string>
        </property>
       </widget>
      </item>
@@ -32,32 +93,7 @@
      </item>
     </layout>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QPushButton" name="allAplicationsButton">
-       <property name="text">
-        <string>All Applications</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="mentorDefinedButton">
-       <property name="text">
-        <string>Mentor Meeting Defined</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="mentorUndefinedButton">
-       <property name="text">
-        <string>Mentor Interview Undefined</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
+   <item row="2" column="0" colspan="2">
     <widget class="QTableWidget" name="ApplicationsTable">
      <property name="columnCount">
       <number>7</number>
@@ -71,29 +107,19 @@
      <column/>
     </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="VIT1Button">
+   <item row="1" column="1">
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="mentorDefinedButton">
        <property name="text">
-        <string>VIT1 Records</string>
+        <string>Mentor Meeting Defined</string>
        </property>
       </widget>
      </item>
-     <item>
-      <widget class="QPushButton" name="VIT2Button">
+     <item row="1" column="0">
+      <widget class="QPushButton" name="mentorUndefinedButton">
        <property name="text">
-        <string>VIT2 Records</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ReturnButton">
-       <property name="text">
-        <string>Return to Preferences</string>
-       </property>
-       <property name="autoRepeatInterval">
-        <number>100</number>
+        <string>Mentor Interview Undefined</string>
        </property>
       </widget>
      </item>
