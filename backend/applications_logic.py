@@ -46,6 +46,14 @@ class ApplicationsLogic:
         self.ui.mentorUndefinedButton.clicked.connect(lambda: self.filter_mentor("ATANMADI"))
         self.ui.comboBox_filters.currentIndexChanged.connect(self.handle_combobox)
         self.ui.closeButton.clicked.connect(lambda: sys.exit())
+        self.ui.ReturnButton.clicked.connect(self.return_preferences)
+
+    def return_preferences(self):
+        """Preferences sayfasına dönmek için pencereyi kapatır."""
+        from backend.preference_menu_logic import PreferenceMenuLogic # Eğer hata alırsanız import yerini kontrol edin
+        self.main_menu = PreferenceMenuLogic()
+        self.main_menu.show()
+        self.close()  # Mevcut pencereyi kapatır, böylece Preferences sayfası görünür olur    
 
     def search_by_name(self):
         text = self.ui.searchInput.text().strip().lower()
@@ -81,31 +89,31 @@ class ApplicationsLogic:
             self.display_data(clean_df)
 
 
-   ###test icin.
-# if __name__ == "__main__":
-#     from PyQt6.QtWidgets import QApplication, QWidget
-#     import sys
-#     import os
-#     sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+   ##test icin.
+if __name__ == "__main__":
+    from PyQt6.QtWidgets import QApplication, QWidget
+    import sys
+    import os
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
     
-#     # UI dosyanın yoluna göre import et (Gerekirse 'from py.applications import ...' yap)
-#     try:
-#         from py.applications import Ui_ApplicationsPage
-#     except ImportError:
-#         # Eğer py klasörü içindeyse veya yol farklıysa burayı düzeltmelisin
-#         print("UI dosyası bulunamadı, lütfen import yolunu kontrol et!")
+    # UI dosyanın yoluna göre import et (Gerekirse 'from py.applications import ...' yap)
+    try:
+        from py.applications import Ui_ApplicationsPage
+    except ImportError:
+        # Eğer py klasörü içindeyse veya yol farklıysa burayı düzeltmelisin
+        print("UI dosyası bulunamadı, lütfen import yolunu kontrol et!")
 
-#     class TestApp(QWidget):
-#         def __init__(self):
-#             super().__init__()
-#             self.ui = Ui_ApplicationsPage()
-#             self.ui.setupUi(self)
+    class TestApp(QWidget):
+        def __init__(self):
+            super().__init__()
+            self.ui = Ui_ApplicationsPage()
+            self.ui.setupUi(self)
             
-#             # Yazdığımız mantığı bağlıyoruz
-#             self.logic = ApplicationsLogic(self.ui)
-#             self.logic.load_and_initialize()
+            # Yazdığımız mantığı bağlıyoruz
+            self.logic = ApplicationsLogic(self.ui)
+            self.logic.load_and_initialize()
 
-#     app = QApplication(sys.argv)
-#     window = TestApp()
-#     window.show()
-#     sys.exit(app.exec())            
+    app = QApplication(sys.argv)
+    window = TestApp()
+    window.show()
+    sys.exit(app.exec())            

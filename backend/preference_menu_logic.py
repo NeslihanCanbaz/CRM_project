@@ -10,7 +10,7 @@ if parent_dir not in sys.path:
 
 # --- IMPORTLAR ---
 try:
-    from py.prefence_menu import Ui_MainWindow
+    from py.preference_menu import Ui_MainWindow
     from py.applications import Ui_ApplicationsPage
     from py.mentor_interview import Ui_Dialog
     from py.interview import Ui_Form
@@ -40,18 +40,32 @@ class PreferenceMenuLogic(QtWidgets.QMainWindow, Ui_MainWindow):
             self.closeButton.clicked.connect(self.close)
 
     def open_applications(self):
-        self.sub_window = QtWidgets.QWidget()
-        ui = Ui_ApplicationsPage()
-        ui.setupUi(self.sub_window)
-        from backend.applications_logic import ApplicationsLogic
-        self.app_logic = ApplicationsLogic(ui)
-
-        # Eğer logic dosyanın içinde sinyalleri bağlayan bir metodun varsa:
-        # if hasattr(self.app_logic, 'setup_signals'):
-        #     self.app_logic.setup_signals(self.sub_window)
-
-        set_table_data(ui, "Basvurular.xlsx")
-        self.sub_window.show()
+       
+        try:
+            # 1. Pencereyi 'self.sub_window' üzerine kur (Interview ile aynı yapı)
+            self.sub_window = QtWidgets.QWidget()
+            ui = Ui_ApplicationsPage()
+            ui.setupUi(self.sub_window)
+            
+            # 2. Logic sınıfını import et ve 'self.app_logic' olarak sakla
+            from backend.applications_logic import ApplicationsLogic
+            self.app_logic = ApplicationsLogic(ui)
+            self.app_logic.load_and_initialize()
+            
+            # 3. Tablo verisini yükle
+            set_table_data(ui, "Basvurular.xlsx")
+            
+            # 4. Pencereyi göster
+            self.sub_window.show()
+            self.hide()
+            print("Application sayfası başarıyla açıldı.")
+            
+        except Exception as e:
+            # Hata varsa terminalde görelim
+            print(f"Application penceresi hatası: {e}")
+           
+            
+           
 
     def open_mentor(self):
         try:
@@ -87,9 +101,9 @@ class PreferenceMenuLogic(QtWidgets.QMainWindow, Ui_MainWindow):
         except Exception as e:
             print(f"Mülakat penceresi hatası: {e}")
 
- ########--- TEST BLOĞU ---
-# if __name__ == "__main__":
-#     app = QtWidgets.QApplication(sys.argv)
-#     window = PreferenceMenuLogic()
-#     window.show()
-#     sys.exit(app.exec())
+ #######--- TEST BLOĞU ---
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    window = PreferenceMenuLogic()
+    window.show()
+    sys.exit(app.exec())

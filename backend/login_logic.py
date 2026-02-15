@@ -4,6 +4,9 @@ import pandas as pd
 import warnings
 from PyQt6 import QtWidgets, QtCore
 
+from backend.preference_admin_logic import AdminMenu
+from backend.preference_menu_logic import PreferenceMenuLogic
+
 # Gereksiz terminal uyarılarını (sip uyarısı gibi) gizle
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -40,12 +43,7 @@ class AdminSayfasi(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         self.setWindowTitle("CRM - Admin Panel")
 
-class UserSayfasi(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.ui = Ui_UserMenu()
-        self.ui.setupUi(self)
-        self.setWindowTitle("CRM - Kullanıcı Paneli")
+
 
 # --- ANA LOGIN SINIFI ---
 
@@ -104,12 +102,12 @@ class LoginSistemi(QtWidgets.QMainWindow):
     # --- YÖNLENDİRME FONKSİYONLARI ---
 
     def ac_admin_sayfasi(self):
-        self.admin_win = AdminSayfasi()
+        self.admin_win = AdminMenu()
         self.admin_win.show()
         self.close() # Giriş ekranını kapatır
 
     def ac_user_sayfasi(self):
-        self.user_win = UserSayfasi()
+        self.user_win = PreferenceMenuLogic()
         self.user_win.show()
         self.close() # Giriş ekranını kapatır
 

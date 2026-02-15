@@ -109,7 +109,7 @@ class MentorInterviewWindow(QtWidgets.QDialog):
         """Tercihler menüsüne geri döner."""
         self.close()  # Bu pencereyi kapatır, tercihler menüsü arka planda kalır    
 
-if __name__ == "_main_":
+if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     window = MentorInterviewWindow()
     window.show()

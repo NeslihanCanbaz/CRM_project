@@ -71,7 +71,7 @@ class AdminMenu(QMainWindow):
         self.ui.btnClose.clicked.connect(self.close)
 
 # --- 3. ÇALIŞTIRMA ---
-if __name__ == "_main_":
+if __name__ == "__main_s_":
     app = QApplication(sys.argv)
     window = AdminMenu()
     window.show()
