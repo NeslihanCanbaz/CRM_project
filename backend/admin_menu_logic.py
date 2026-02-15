@@ -143,7 +143,7 @@ class AdminMenu(QtWidgets.QMainWindow):
         self.close()
 
 # --- PROGRAMI BAŞLATMA ---
-if __name__ == "_main_":
+if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion") # Görsel hataları önlemek için
     
