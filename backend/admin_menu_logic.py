@@ -4,25 +4,36 @@ import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from pathlib import Path # Yol yönetimi için
+from dotenv import load_dotenv # .env okumak için
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-
 from PyQt6 import QtWidgets, uic, QtCore        
+
+# --- DİNAMİK YOL AYARLARI ---
+# Bu dosya 'backend' içindeyse, .parent.parent ile ana CRM dizinine ulaşırız
+BASE_DIR = Path(_file_).resolve().parent.parent
+
+# .env dosyasını yükle
+load_dotenv(BASE_DIR / ".env")
 
 # --- AYARLAR ---
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
-GMAIL_ADDRESS = "sefac613@gmail.com"
-GMAIL_PASSWORD = "nkskxijwxmuplipq" # 16 haneli Uygulama Şifresi
+GMAIL_ADDRESS = os.getenv("GMAIL_ADDRESS") # .env'den al
+GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD") # .env'den al
 
 class AdminMenu(QtWidgets.QMainWindow):
-    def _init_(self):
+    def __nit__(self):
         super(AdminMenu, self)._init_()
         
-        # 1. UI Dosyasını Yükle (Yolun doğruluğundan emin ol)
-        uic.loadUi("/Users/sefaceylan/Desktop/crm/ui/AdminMenu.ui", self)
+        # 1. UI Dosyasını Dinamik Yükle
+        ui_path = BASE_DIR / "ui" / "AdminMenu.ui"
+        if not ui_path.exists():
+            print(f"HATA: UI dosyası bulunamadı: {ui_path}")
+        uic.loadUi(str(ui_path), self)
         
         # 2. Tablo Sütunlarını Ayarla
         self.eventsTable.setColumnCount(4)
@@ -33,26 +44,34 @@ class AdminMenu(QtWidgets.QMainWindow):
         header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Stretch)
 
         # 3. Buton Sinyalleri
-        self.eventRegistrationButton.clicked.connect(self.fetch_google_data) # Veri Çek
-        self.mailButton.clicked.connect(self.send_bulk_emails)             # Mail Gönder
+        self.eventRegistrationButton.clicked.connect(self.fetch_google_data)
+        self.mailButton.clicked.connect(self.send_bulk_emails)
         self.returnToAdminPreferencesButton.clicked.connect(self.back_to_admin)
         self.exitButton.clicked.connect(self.close)
 
     def get_google_service(self):
-        """Google API Kimlik Doğrulama ve Servis Oluşturma."""
+        """Google API Kimlik Doğrulama ve Servis Oluşturma (Dinamik Yollar)."""
         creds = None
-        if os.path.exists('token.json'):
-            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        # token.json her zaman ana dizinde kalsın
+        token_path = BASE_DIR / "token.json"
+        # credentials.json backend klasöründe
+        creds_path = BASE_DIR / "backend" / "credentials.json"
+
+        if token_path.exists():
+            creds = Credentials.from_authorized_user_file(str(token_path), SCOPES)
         
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    '/Users/sefaceylan/Desktop/crm/backend/credentials.json', SCOPES)
+                if not creds_path.exists():
+                    QtWidgets.QMessageBox.critical(self, "Hata", "credentials.json dosyası 'backend' klasöründe bulunamadı!")
+                    return None
+                
+                flow = InstalledAppFlow.from_client_secrets_file(str(creds_path), SCOPES)
                 creds = flow.run_local_server(port=0)
 
-            with open('token.json', 'w') as token:
+            with open(token_path, 'w') as token:
                 token.write(creds.to_json())
 
         return build('calendar', 'v3', credentials=creds)
@@ -61,7 +80,8 @@ class AdminMenu(QtWidgets.QMainWindow):
         """Etkinlikleri Google Takvim'den çekip tabloya yazar."""
         try:
             service = self.get_google_service()
-            # Zaman dilimi uyumlu (timezone-aware) yeni utcnow standardı
+            if not service: return
+
             now = datetime.datetime.now(datetime.timezone.utc).isoformat()
             
             result = service.events().list(
@@ -95,6 +115,10 @@ class AdminMenu(QtWidgets.QMainWindow):
 
     def send_bulk_emails(self):
         """Tablodaki katılımcılara toplu mail gönderir."""
+        if not GMAIL_ADDRESS or not GMAIL_PASSWORD:
+            QtWidgets.QMessageBox.warning(self, "Hata", ".env dosyasında mail bilgileri eksik!")
+            return
+
         row_count = self.eventsTable.rowCount()
         if row_count == 0:
             QtWidgets.QMessageBox.warning(self, "Uyarı", "Tabloda gönderilecek veri yok!")
@@ -102,7 +126,6 @@ class AdminMenu(QtWidgets.QMainWindow):
 
         sent_count = 0
         try:
-            # SMTP Bağlantısı
             server = smtplib.SMTP("smtp.gmail.com", 587)
             server.starttls()
             server.login(GMAIL_ADDRESS, GMAIL_PASSWORD)
@@ -131,25 +154,23 @@ class AdminMenu(QtWidgets.QMainWindow):
                             sent_count += 1
 
             server.quit()
-            QtWidgets.QMessageBox.information(self, "Başarılı", f"{sent_count} adet mail başarıyla gönderildi.")
+            QtWidgets.QMessageBox.information(self, "Başarılı", f"{sent_count} adet mail gönderildi.")
             
         except Exception as e:
             print(f"MAIL GÖNDERME HATASI: {e}")
             QtWidgets.QMessageBox.critical(self, "Hata", f"Mail hatası: {str(e)}")
 
     def back_to_admin(self):
-        """Tercihler ekranına geri dönmek için kullanılır."""
-        print("Geri dönülüyor...")
         self.close()
 
 # --- PROGRAMI BAŞLATMA ---
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    app.setStyle("Fusion") # Görsel hataları önlemek için
+    app.setStyle("Fusion")
     
     try:
         main_window = AdminMenu() 
         main_window.show()
         sys.exit(app.exec())
     except Exception as e:
-        print(f"Beklenmedik bir hata oluştu: {e}")
+        print(f"Hata: {e}")

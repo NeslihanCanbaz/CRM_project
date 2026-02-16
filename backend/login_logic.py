@@ -28,7 +28,7 @@ try:
     from login import Ui_loginpage
     # Admin için 'preference_admin.py', User için 'preference_menu.py' dosyalarını bağlıyoruz
     from preference_admin import Ui_MainWindow as Ui_AdminMenu 
-    from prefenrece_menu import Ui_MainWindow as Ui_UserMenu
+    from preference_menu import Ui_MainWindow as Ui_UserMenu
 except ImportError as e:
     print(f"HATA: Tasarım dosyaları bulunamadı! Aranan konum: {TASARIM_DIZINI}")
     print(f"Hata detayı: {e}")
@@ -54,16 +54,16 @@ class LoginSistemi(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         
         # Başlangıç Ayarları
-        self.ui.label_2.setText("")
-        self.ui.lineEdit_2.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
+        self.ui.hataLabel.setText("")
+        self.ui.passwordInput.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
         
         # Buton Bağlantıları
-        self.ui.pushButton.clicked.connect(self.login_kontrol)
-        self.ui.pushButton_2.clicked.connect(self.close)
+        self.ui.loginButton.clicked.connect(self.login_kontrol)
+        self.ui.exitButton.clicked.connect(self.close)
 
     def login_kontrol(self):
-        kullanici_input = self.ui.lineEdit.text().strip()
-        sifre_input = self.ui.lineEdit_2.text().strip()
+        kullanici_input = self.ui.userNameInput.text().strip()
+        sifre_input = self.ui.passwordInput.text().strip()
 
         if not kullanici_input or not sifre_input:
             self.mesaj_yaz("Lütfen tüm alanları doldurun!", "orange")
@@ -96,8 +96,8 @@ class LoginSistemi(QtWidgets.QMainWindow):
             print(f"Hata detayı: {e}")
 
     def mesaj_yaz(self, mesaj, renk):
-        self.ui.label_2.setText(mesaj)
-        self.ui.label_2.setStyleSheet(f"color: {renk}; font-weight: bold;")
+        self.ui.hataLabel.setText(mesaj)
+        self.ui.hataLabel.setStyleSheet(f"color: {renk}; font-weight: bold;")
 
     # --- YÖNLENDİRME FONKSİYONLARI ---
 

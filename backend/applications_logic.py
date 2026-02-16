@@ -49,11 +49,14 @@ class ApplicationsLogic:
         self.ui.ReturnButton.clicked.connect(self.return_preferences)
 
     def return_preferences(self):
-        """Preferences sayfasına dönmek için pencereyi kapatır."""
-        from backend.preference_menu_logic import PreferenceMenuLogic # Eğer hata alırsanız import yerini kontrol edin
-        self.main_menu = PreferenceMenuLogic()
-        self.main_menu.show()
-        self.close()  # Mevcut pencereyi kapatır, böylece Preferences sayfası görünür olur    
+        current_window = self.ui.ReturnButton.window()
+        print("Pencere kapatılıyor ama uygulama devam etmeli...")
+        current_window.close()
+        # """Preferences sayfasına dönmek için pencereyi kapatır."""
+        # from backend.preference_menu_logic import PreferenceMenuLogic # Eğer hata alırsanız import yerini kontrol edin
+        # self.main_menu = PreferenceMenuLogic()
+        # self.main_menu.show()
+        # self.close()  # Mevcut pencereyi kapatır, böylece Preferences sayfası görünür olur    
 
     def search_by_name(self):
         text = self.ui.searchInput.text().strip().lower()
