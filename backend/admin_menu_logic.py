@@ -26,11 +26,11 @@ GMAIL_ADDRESS = os.getenv("GMAIL_ADDRESS")
 GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
 
 class AdminMenu(QtWidgets.QMainWindow):
-    def __init__(self):
-        super(AdminMenu, self).__init__()
+    def __init__(self, parent=None):
+        super(AdminMenu, self).__init__(parent)
         
         # 1. UI Dosyasını Dinamik Yükle
-        ui_path = BASE_DIR / "ui" / "AdminMenu.ui"
+        ui_path = BASE_DIR / "ui" / "admin_menu.ui"
         if not ui_path.exists():
             QtWidgets.QMessageBox.critical(self, "Hata", f"UI dosyası bulunamadı:\n{ui_path}")
             return
@@ -173,8 +173,10 @@ class AdminMenu(QtWidgets.QMainWindow):
             # Beklenmedik bir hata oluşursa programın kapanmasını (crash) önler
             QtWidgets.QMessageBox.critical(self, "Sistem Hatası", f"Mail servisine bağlanırken bir hata oluştu:\n{str(e)}")
     def back_to_admin(self):
-        """Admin tercihler ekranına geri döner."""
+        """prfAdminMenu ekranına geri döner."""
         print("Geri dönülüyor...")
+        if self.parent():
+            self.parent().show()  # Ana pencereyi gösterir
         self.close()  # Mevcut pencereyi kapatır
 
 if __name__ == "__main__":

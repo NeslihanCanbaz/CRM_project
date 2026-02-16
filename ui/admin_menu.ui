@@ -31,7 +31,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QTableWidget" name="tableWidget">
+     <widget class="QTableWidget" name="eventsTable">
       <property name="columnCount">
        <number>8</number>
       </property>
@@ -64,7 +64,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="eventRegistrationButton">
         <property name="minimumSize">
          <size>
           <width>100</width>
@@ -77,14 +77,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_3">
+       <widget class="QPushButton" name="returnToAdminPreferencesButton">
         <property name="text">
          <string>Preferences</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="mailButton">
         <property name="minimumSize">
          <size>
           <width>100</width>
@@ -97,7 +97,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButton_4">
+       <widget class="QPushButton" name="exitButton">
         <property name="minimumSize">
          <size>
           <width>100</width>
