@@ -29,6 +29,16 @@ class MentorInterviewWindow(QtWidgets.QDialog):
 
         # UI dosyasını yükle (str() fonksiyonu uic için gereklidir)
         uic.loadUi(str(ui_path), self)
+        self.setStyleSheet("""
+    QLineEdit { 
+        color: #000000; 
+        background-color: #FFFFFF; 
+    }
+    QComboBox { 
+        color: #000000; 
+        background-color: #FFFFFF; 
+    }
+""")
         
         # self.excel_path'i diğer fonksiyonlarda kullanabilmek için stringe çevirelim
         self.excel_path = str(self.excel_path)
