@@ -26,9 +26,9 @@ if TASARIM_DIZINI not in sys.path:
 # --- TASARIMLARI İÇERİ AKTAR ---
 try:
     from login import Ui_loginpage
-    # Admin için 'prefence_admin.py', User için 'prefence_menu.py' dosyalarını bağlıyoruz
-    from prefence_admin import Ui_MainWindow as Ui_AdminMenu 
-    from prefence_menu import Ui_MainWindow as Ui_UserMenu
+    # Admin için 'preference_admin.py', User için 'preference_menu.py' dosyalarını bağlıyoruz
+    from preference_admin import Ui_MainWindow as Ui_AdminMenu 
+    from prefenrece_menu import Ui_MainWindow as Ui_UserMenu
 except ImportError as e:
     print(f"HATA: Tasarım dosyaları bulunamadı! Aranan konum: {TASARIM_DIZINI}")
     print(f"Hata detayı: {e}")
