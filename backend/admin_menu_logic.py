@@ -4,8 +4,8 @@ import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from pathlib import Path # Yol yönetimi için
-from dotenv import load_dotenv # .env okumak için
+from pathlib import Path
+from dotenv import load_dotenv
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -14,47 +14,45 @@ from googleapiclient.discovery import build
 from PyQt6 import QtWidgets, uic, QtCore        
 
 # --- DİNAMİK YOL AYARLARI ---
-# Bu dosya 'backend' içindeyse, .parent.parent ile ana CRM dizinine ulaşırız
-BASE_DIR = Path(_file_).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# .env dosyasını yükle
-load_dotenv(BASE_DIR / ".env")
+# .env dosyasını tam yol belirterek yükle (Kritik Revize)
+env_path = BASE_DIR / ".env"
+load_dotenv(env_path)
 
 # --- AYARLAR ---
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
-GMAIL_ADDRESS = os.getenv("GMAIL_ADDRESS") # .env'den al
-GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD") # .env'den al
+GMAIL_ADDRESS = os.getenv("GMAIL_ADDRESS")
+GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
 
 class AdminMenu(QtWidgets.QMainWindow):
-    def __nit__(self):
-        super(AdminMenu, self)._init_()
+    def __init__(self):
+        super(AdminMenu, self).__init__()
         
         # 1. UI Dosyasını Dinamik Yükle
         ui_path = BASE_DIR / "ui" / "AdminMenu.ui"
         if not ui_path.exists():
-            print(f"HATA: UI dosyası bulunamadı: {ui_path}")
+            QtWidgets.QMessageBox.critical(self, "Hata", f"UI dosyası bulunamadı:\n{ui_path}")
+            return
         uic.loadUi(str(ui_path), self)
         
-        # 2. Tablo Sütunlarını Ayarla
+        # 2. Tablo Ayarları
         self.eventsTable.setColumnCount(4)
         self.eventsTable.setHorizontalHeaderLabels([
             "Toplantı Başlığı", "Başlangıç Zamanı", "Katılımcı E-mailleri", "Düzenleyen"
         ])
-        header = self.eventsTable.horizontalHeader()
-        header.setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Stretch)
+        self.eventsTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Stretch)
 
-        # 3. Buton Sinyalleri
+        # 3. Sinyaller
         self.eventRegistrationButton.clicked.connect(self.fetch_google_data)
         self.mailButton.clicked.connect(self.send_bulk_emails)
         self.returnToAdminPreferencesButton.clicked.connect(self.back_to_admin)
         self.exitButton.clicked.connect(self.close)
 
     def get_google_service(self):
-        """Google API Kimlik Doğrulama ve Servis Oluşturma (Dinamik Yollar)."""
+        """Google API Servis Oluşturma."""
         creds = None
-        # token.json her zaman ana dizinde kalsın
         token_path = BASE_DIR / "token.json"
-        # credentials.json backend klasöründe
         creds_path = BASE_DIR / "backend" / "credentials.json"
 
         if token_path.exists():
@@ -65,31 +63,25 @@ class AdminMenu(QtWidgets.QMainWindow):
                 creds.refresh(Request())
             else:
                 if not creds_path.exists():
-                    QtWidgets.QMessageBox.critical(self, "Hata", "credentials.json dosyası 'backend' klasöründe bulunamadı!")
+                    QtWidgets.QMessageBox.critical(self, "Hata", "credentials.json dosyası bulunamadı!")
                     return None
-                
                 flow = InstalledAppFlow.from_client_secrets_file(str(creds_path), SCOPES)
                 creds = flow.run_local_server(port=0)
-
             with open(token_path, 'w') as token:
                 token.write(creds.to_json())
 
         return build('calendar', 'v3', credentials=creds)
 
     def fetch_google_data(self):
-        """Etkinlikleri Google Takvim'den çekip tabloya yazar."""
+        """Verileri çekip tabloya doldurur."""
         try:
             service = self.get_google_service()
             if not service: return
 
             now = datetime.datetime.now(datetime.timezone.utc).isoformat()
-            
             result = service.events().list(
-                calendarId='primary',
-                timeMin=now,
-                maxResults=10,
-                singleEvents=True,
-                orderBy='startTime'
+                calendarId='primary', timeMin=now, maxResults=10,
+                singleEvents=True, orderBy='startTime'
             ).execute()
 
             events = result.get('items', [])
@@ -107,70 +99,87 @@ class AdminMenu(QtWidgets.QMainWindow):
                 self.eventsTable.setItem(row, 2, QtWidgets.QTableWidgetItem(attendees))
                 self.eventsTable.setItem(row, 3, QtWidgets.QTableWidgetItem(organizer))
             
-            QtWidgets.QMessageBox.information(self, "Başarılı", "Veriler başarıyla çekildi.")
+            QtWidgets.QMessageBox.information(self, "Başarılı", "Veriler güncellendi.")
         
         except Exception as e:
-            print(f"VERİ ÇEKME HATASI: {e}")
-            QtWidgets.QMessageBox.critical(self, "Hata", f"Veri çekilemedi: {str(e)}")
+            QtWidgets.QMessageBox.critical(self, "Hata", f"Veri çekilemedi: {e}")
 
     def send_bulk_emails(self):
-        """Tablodaki katılımcılara toplu mail gönderir."""
-        if not GMAIL_ADDRESS or not GMAIL_PASSWORD:
-            QtWidgets.QMessageBox.warning(self, "Hata", ".env dosyasında mail bilgileri eksik!")
-            return
-
+        """
+        Google Takvim'den çekilen etkinliklerdeki katılımcı listesine 
+        toplu mail gönderir ve sonucu ekranda mesaj olarak gösterir.
+        """
+        # 1. Kontrol: Tablo boş mu? (Önce verileri çekmek şart)
         row_count = self.eventsTable.rowCount()
         if row_count == 0:
-            QtWidgets.QMessageBox.warning(self, "Uyarı", "Tabloda gönderilecek veri yok!")
+            QtWidgets.QMessageBox.warning(self, "Uyarı", "Gönderilecek veri bulunamadı! Lütfen önce etkinlikleri çekin.")
+            return
+
+        # 2. Kontrol: Mail ayarları yapılmış mı?
+        if not GMAIL_ADDRESS or not GMAIL_PASSWORD:
+            QtWidgets.QMessageBox.critical(self, "Hata", ".env dosyasındaki mail bilgileri eksik veya okunamadı.")
             return
 
         sent_count = 0
+        failed_count = 0
+        
+
         try:
-            server = smtplib.SMTP("smtp.gmail.com", 587)
+            # SMTP Bağlantısını kur
+            server = smtplib.SMTP("smtp.gmail.com", 587, timeout=15)
             server.starttls()
             server.login(GMAIL_ADDRESS, GMAIL_PASSWORD)
 
             for row in range(row_count):
+                # Tablodaki 2. sütun (indis 2) katılımcı maillerini içeriyor
                 email_item = self.eventsTable.item(row, 2)
-                title_item = self.eventsTable.item(row, 0)
-                time_item = self.eventsTable.item(row, 1)
+                title_item = self.eventsTable.item(row, 0) # Toplantı başlığı
+                time_item = self.eventsTable.item(row, 1)  # Zaman bilgisi
 
-                if email_item and email_item.text():
-                    email_list = [e.strip() for e in email_item.text().split(",")]
-                    title = title_item.text() if title_item else "Toplantı"
-                    start = time_item.text() if time_item else "Belirtilmemiş"
+                if email_item and email_item.text().strip():
+                    # Virgülle ayrılmış birden fazla mail adresini ayıkla
+                    email_list = [e.strip() for e in email_item.text().split(",") if "@" in e]
+                    title = title_item.text() if title_item else "Etkinlik Hatırlatıcısı"
+                    time_info = time_item.text() if time_item else "Belirtilmemiş"
 
                     for email in email_list:
-                        if "@" in email:
+                        try:
                             msg = MIMEMultipart()
                             msg['From'] = GMAIL_ADDRESS
                             msg['To'] = email
                             msg['Subject'] = f"Hatırlatma: {title}"
                             
-                            body = f"Merhaba,\n\n'{title}' etkinliği {start} tarihinde başlayacaktır.\n\nİyi günler."
+                            body = f"Merhaba,\n\n'{title}' başlıklı etkinliğiniz {time_info} zamanında başlayacaktır.\n\nİyi günler dileriz."
                             msg.attach(MIMEText(body, 'plain'))
                             
                             server.send_message(msg)
                             sent_count += 1
+                        except:
+                            failed_count += 1
 
             server.quit()
-            QtWidgets.QMessageBox.information(self, "Başarılı", f"{sent_count} adet mail gönderildi.")
-            
+
+            # --- İSTEDİĞİN MESAJ KUTUSU (BİLGİLENDİRME) ---
+            if sent_count > 0:
+                msg_text = f"{sent_count} adet mail başarıyla gönderildi."
+                if failed_count > 0:
+                    msg_text += f"\n({failed_count} adet mail gönderilemedi.)"
+                
+                QtWidgets.QMessageBox.information(self, "Mail Gönderim Bilgisi", msg_text)
+            else:
+                QtWidgets.QMessageBox.warning(self, "Sonuç", "Hiç mail gönderilemedi. Lütfen adresleri kontrol edin.")
+
         except Exception as e:
-            print(f"MAIL GÖNDERME HATASI: {e}")
-            QtWidgets.QMessageBox.critical(self, "Hata", f"Mail hatası: {str(e)}")
-
+            # Beklenmedik bir hata oluşursa programın kapanmasını (crash) önler
+            QtWidgets.QMessageBox.critical(self, "Sistem Hatası", f"Mail servisine bağlanırken bir hata oluştu:\n{str(e)}")
     def back_to_admin(self):
-        self.close()
+        """Admin tercihler ekranına geri döner."""
+        print("Geri dönülüyor...")
+        self.close()  # Mevcut pencereyi kapatır
 
-# --- PROGRAMI BAŞLATMA ---
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle("Fusion")
-    
-    try:
-        main_window = AdminMenu() 
-        main_window.show()
-        sys.exit(app.exec())
-    except Exception as e:
-        print(f"Hata: {e}")
+    window = AdminMenu() 
+    window.show()
+    sys.exit(app.exec())
