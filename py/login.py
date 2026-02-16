@@ -26,22 +26,41 @@ class Ui_loginpage(object):
         self.widget = QtWidgets.QWidget(parent=self.centralwidget)
         self.widget.setGeometry(QtCore.QRect(110, 30, 300, 400))
         self.widget.setMinimumSize(QtCore.QSize(300, 400))
-        self.widget.setStyleSheet("background-color: rgb(223, 223, 223);")
+        self.widget.setStyleSheet("/* Ana arka plan rengi */\n"
+"QWidget {\n"
+"    background-color: rgb(223, 223, 223);\n"
+"    color: black; /* Tüm yazıların siyah olmasını zorla */\n"
+"}\n"
+"\n"
+"/* Giriş kutularını beyaz yap ve yazıları belirginleştir */\n"
+"QLineEdit {\n"
+"    background-color: white;\n"
+"    color: black;\n"
+"    border: 1px solid gray;\n"
+"}\n"
+"\n"
+"/* Butonları daha belirgin yap */\n"
+"QPushButton {\n"
+"    background-color: #f0f0f0;\n"
+"    color: black;\n"
+"    border: 1px solid #777;\n"
+"    padding: 5px;\n"
+"}")
         self.widget.setObjectName("widget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.widget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
         self.verticalLayout.addItem(spacerItem)
-        self.lineEdit = QtWidgets.QLineEdit(parent=self.widget)
-        self.lineEdit.setText("")
-        self.lineEdit.setObjectName("lineEdit")
-        self.verticalLayout.addWidget(self.lineEdit)
-        self.lineEdit_2 = QtWidgets.QLineEdit(parent=self.widget)
-        self.lineEdit_2.setText("")
-        self.lineEdit_2.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
-        self.lineEdit_2.setObjectName("lineEdit_2")
-        self.verticalLayout.addWidget(self.lineEdit_2)
+        self.userNameInput = QtWidgets.QLineEdit(parent=self.widget)
+        self.userNameInput.setText("")
+        self.userNameInput.setObjectName("userNameInput")
+        self.verticalLayout.addWidget(self.userNameInput)
+        self.passwordInput = QtWidgets.QLineEdit(parent=self.widget)
+        self.passwordInput.setText("")
+        self.passwordInput.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
+        self.passwordInput.setObjectName("passwordInput")
+        self.verticalLayout.addWidget(self.passwordInput)
         self.frame = QtWidgets.QFrame(parent=self.widget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -53,15 +72,15 @@ class Ui_loginpage(object):
         self.frame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
         self.frame.setObjectName("frame")
         self.verticalLayout.addWidget(self.frame)
-        self.pushButton = QtWidgets.QPushButton(parent=self.widget)
-        self.pushButton.setObjectName("pushButton")
-        self.verticalLayout.addWidget(self.pushButton)
-        self.pushButton_2 = QtWidgets.QPushButton(parent=self.widget)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.verticalLayout.addWidget(self.pushButton_2)
-        self.label_2 = QtWidgets.QLabel(parent=self.widget)
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout.addWidget(self.label_2)
+        self.loginButton = QtWidgets.QPushButton(parent=self.widget)
+        self.loginButton.setObjectName("loginButton")
+        self.verticalLayout.addWidget(self.loginButton)
+        self.exitButton = QtWidgets.QPushButton(parent=self.widget)
+        self.exitButton.setObjectName("exitButton")
+        self.verticalLayout.addWidget(self.exitButton)
+        self.hataLabel = QtWidgets.QLabel(parent=self.widget)
+        self.hataLabel.setObjectName("hataLabel")
+        self.verticalLayout.addWidget(self.hataLabel)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
         loginpage.setCentralWidget(self.centralwidget)
@@ -79,11 +98,11 @@ class Ui_loginpage(object):
     def retranslateUi(self, loginpage):
         _translate = QtCore.QCoreApplication.translate
         loginpage.setWindowTitle(_translate("loginpage", "MainWindow"))
-        self.lineEdit.setPlaceholderText(_translate("loginpage", "Username"))
-        self.lineEdit_2.setPlaceholderText(_translate("loginpage", "Password"))
-        self.pushButton.setText(_translate("loginpage", "Login"))
-        self.pushButton_2.setText(_translate("loginpage", "Exit"))
-        self.label_2.setText(_translate("loginpage", "TextLabel"))
+        self.userNameInput.setPlaceholderText(_translate("loginpage", "Username"))
+        self.passwordInput.setPlaceholderText(_translate("loginpage", "Password"))
+        self.loginButton.setText(_translate("loginpage", "Login"))
+        self.exitButton.setText(_translate("loginpage", "Exit"))
+        self.hataLabel.setText(_translate("loginpage", "TextLabel"))
 
 
 if __name__ == "__main__":

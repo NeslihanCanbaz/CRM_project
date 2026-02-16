@@ -16,6 +16,7 @@ try:
     from py.interview import Ui_Form
     from backend.set_table_data import set_table_data
     from backend.interview_logic import InterviewLogic
+    from backend.mentor_interview_logic import MentorInterviewWindow
 except ImportError as e:
     print(f"KRİTİK HATA: Import edilemedi -> {e}")
 
@@ -54,34 +55,42 @@ class PreferenceMenuLogic(QtWidgets.QMainWindow, Ui_MainWindow):
             
             # 3. Tablo verisini yükle
             set_table_data(ui, "Basvurular.xlsx")
+
+            self.sub_window.destroyed.connect(lambda: self.show())
             
             # 4. Pencereyi göster
             self.sub_window.show()
-            self.hide()
+           
             print("Application sayfası başarıyla açıldı.")
             
         except Exception as e:
             # Hata varsa terminalde görelim
             print(f"Application penceresi hatası: {e}")
+
+        
            
             
            
 
     def open_mentor(self):
         try:
-            # QDialog hatasını önlemek için doğru nesneyle oluşturuyoruz
-            self.mentor_window = QtWidgets.QDialog()
-            ui = Ui_Dialog()
-            ui.setupUi(self.mentor_window)
+        #     # QDialog hatasını önlemek için doğru nesneyle oluşturuyoruz
+        #     self.mentor_window = QtWidgets.QDialog()
+        #     ui = Ui_Dialog()
+        #     ui.setupUi(self.mentor_window)
             
-            if os.path.exists("Mentor.xlsx"):
-                set_table_data(ui, "Mentor.xlsx")
-            else:
-                print("Hata: Mentor.xlsx bulunamadı!")
+        #     if os.path.exists("Mentor.xlsx"):
+        #         set_table_data(ui, "Mentor.xlsx")
+        #     else:
+        #         print("Hata: Mentor.xlsx bulunamadı!")
 
+        #     self.mentor_window.show()
+        # except Exception as e:
+        #     print(f"Mentor penceresi hatası: {e}")
+            self.mentor_window = MentorInterviewWindow()
             self.mentor_window.show()
         except Exception as e:
-            print(f"Mentor penceresi hatası: {e}")
+            print(f"Mentor penceresi hatası: {e}")  
 
     def open_interview(self):
         try:
@@ -100,6 +109,8 @@ class PreferenceMenuLogic(QtWidgets.QMainWindow, Ui_MainWindow):
             self.sub_window.show()
         except Exception as e:
             print(f"Mülakat penceresi hatası: {e}")
+
+
 
  #######--- TEST BLOĞU ---
 if __name__ == "__main__":

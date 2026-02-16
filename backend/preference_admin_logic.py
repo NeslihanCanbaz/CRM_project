@@ -58,7 +58,7 @@ class Ui_MainWindow(object):
 
 # --- 2. MANTIK (LOGIC) SINIFI ---
 class AdminMenu(QMainWindow):
-    def _init_(self):
+    def __init__(self):
         super()._init_()
         self.ui = Ui_MainWindow()  # Artık hata vermez, çünkü yukarıda tanımlı
         self.ui.setupUi(self)
@@ -71,7 +71,7 @@ class AdminMenu(QMainWindow):
         self.ui.btnClose.clicked.connect(self.close)
 
 # --- 3. ÇALIŞTIRMA ---
-if __name__ == "__main_s_":
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = AdminMenu()
     window.show()

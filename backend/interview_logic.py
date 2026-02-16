@@ -47,10 +47,17 @@ class InterviewLogic:
             self.ui.btnProjectReceived.clicked.connect(lambda: self.filter_by_column(2, hide_empty=True))
         
         # 5. GERİ DÖN: btnReturntoPreference
-        self.ui.btnReturntoPreference.clicked.connect(lambda: print("Geri dön tetiklendi"))
+        self.ui.btnReturntoPreference.clicked.connect(self.close_only_this_window)
         
         # 6. KAPAT: btnclose
         self.ui.btnclose.clicked.connect(lambda: sys.exit())
+
+    def close_only_this_window(self):
+        """Sadece mülakat penceresini kapatır, ana menüye dokunmaz."""
+        # self.ui bir tasarım objesidir, içindeki bir buton üzerinden 
+        # asıl pencere nesnesine (window) ulaşıp onu kapatıyoruz.
+        current_window = self.ui.btnReturntoPreference.window()
+        current_window.close()
 
     # --- Filtreleme Mantığı ---
 

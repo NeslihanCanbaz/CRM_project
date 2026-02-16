@@ -2,17 +2,36 @@ import sys
 import os
 import pandas as pd
 from PyQt6 import QtWidgets, uic
+from pathlib import Path
 
 class MentorInterviewWindow(QtWidgets.QDialog):
     def __init__(self):
         super(MentorInterviewWindow, self).__init__()
         
-        # 1. UI Dosyasını yükle
-        ui_path = "/Users/sefaceylan/Desktop/crm/ui/mentor_interview.ui"
-        uic.loadUi(ui_path, self)
+        # --- KESİN ÇÖZÜM: DİNAMİK YOL HESAPLAMA ---
+        # 1. Bu dosyanın (mentor_interview.logic.py) konumu: /CRM/backend/
+        MEVCUT_DIZIN = Path(__file__).resolve().parent 
+        
+        # 2. Bir üst klasöre çık (CRM ana dizini): /CRM/
+        ANA_DIZIN = MEVCUT_DIZIN.parent 
+        
+        # 3. UI dosyasının yolu: /CRM/ui/mentor_interview.ui
+        ui_path = ANA_DIZIN / "ui" / "mentor_interview.ui"
+        
+        # 4. Excel dosyasının yolu: /CRM/Mentor.xlsx
+        self.excel_path = ANA_DIZIN / "Mentor.xlsx"
+        
+        # --- Hata Kontrolü (Hata alırsan terminalden kontrol etmen için) ---
+        if not ui_path.exists():
+            print(f"HATA: UI dosyası bulunamadı! Aranan konum: {ui_path}")
+        if not self.excel_path.exists():
+            print(f"HATA: Excel dosyası bulunamadı! Aranan konum: {self.excel_path}")
 
-        # 2. Excel dosyasının yolu
-        self.excel_path = "/Users/sefaceylan/Desktop/crm/Mentor.xlsx" 
+        # UI dosyasını yükle (str() fonksiyonu uic için gereklidir)
+        uic.loadUi(str(ui_path), self)
+        
+        # self.excel_path'i diğer fonksiyonlarda kullanabilmek için stringe çevirelim
+        self.excel_path = str(self.excel_path)
 
         # --- Buton Atamaları ---
         self.searchButton.clicked.connect(self.search_by_name)        
@@ -25,6 +44,7 @@ class MentorInterviewWindow(QtWidgets.QDialog):
         
         # Arama kutusu ayarı
         self.searchInput.setPlaceholderText("Type to search...")
+        self.searchInput.setClearButtonEnabled(True)
         
         # Uygulama açıldığında verileri otomatik yükle (Opsiyonel)
         self.load_all_interviews()
