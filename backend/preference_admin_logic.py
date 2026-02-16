@@ -59,7 +59,7 @@ class Ui_MainWindow(object):
 # --- 2. MANTIK (LOGIC) SINIFI ---
 class AdminMenu(QMainWindow):
     def __init__(self):
-        super()._init_()
+        super().__init__()
         self.ui = Ui_MainWindow()  # Artık hata vermez, çünkü yukarıda tanımlı
         self.ui.setupUi(self)
         
