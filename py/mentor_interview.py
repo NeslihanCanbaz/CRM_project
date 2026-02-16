@@ -13,7 +13,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(621, 549)
-        Dialog.setStyleSheet("background-color: rgb(226, 226, 226);")
+        Dialog.setStyleSheet("backgroun-color:rgb(0, 0, 0)")
         self.layoutWidget = QtWidgets.QWidget(parent=Dialog)
         self.layoutWidget.setGeometry(QtCore.QRect(35, 20, 511, 491))
         self.layoutWidget.setObjectName("layoutWidget")
@@ -31,6 +31,7 @@ class Ui_Dialog(object):
         self.searchInput.setObjectName("searchInput")
         self.horizontalLayout.addWidget(self.searchInput)
         self.searchButton = QtWidgets.QPushButton(parent=self.layoutWidget)
+        self.searchButton.setStyleSheet("background-color:rgb(255, 38, 0)")
         self.searchButton.setObjectName("searchButton")
         self.horizontalLayout.addWidget(self.searchButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -48,7 +49,8 @@ class Ui_Dialog(object):
         self.comboBox.addItem("")
         self.verticalLayout_2.addWidget(self.comboBox)
         self.mentorInterviewTable = QtWidgets.QTableWidget(parent=self.layoutWidget)
-        self.mentorInterviewTable.setStyleSheet("background-color: rgb(201, 223, 255);")
+        self.mentorInterviewTable.setStyleSheet("background-color:\n"
+"rgb(255, 38, 0)")
         self.mentorInterviewTable.setRowCount(10)
         self.mentorInterviewTable.setColumnCount(4)
         self.mentorInterviewTable.setObjectName("mentorInterviewTable")
