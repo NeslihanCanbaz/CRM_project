@@ -1,0 +1,18 @@
+# Google Drive Entegreli CRM Uygulaması
+
+Bu proje, sivil toplum kuruluşları ve eğitim kurumları için aday başvuru, mentorluk ve mülakat süreçlerini yöneten PyQt6 tabanlı bir masaüstü uygulamasıdır.
+
+## 🚀 Özellikler
+* *Akıllı Filtreleme:* VIT1/VIT2 dönemlerine göre mükerrer kayıt kontrolü.
+* *Google API Entegrasyonu:* Drive üzerinden canlı veri çekme ve Takvim senkronizasyonu.
+* *Otomasyon:* Admin paneli üzerinden otomatik bilgilendirme e-postaları gönderimi.
+* *Yetkilendirme:* Admin ve Standart Kullanıcı rolleri için farklı erişim seviyeleri.
+
+## 🛠 Kurulum
+1. Bu depoyu klonlayın: git clone <repo-linki>
+2. Gerekli kütüphaneleri yükleyin: pip install -r requirements.txt
+3. Google Cloud üzerinden aldığınız credentials.json dosyasını ana dizine ekleyin.
+4. Uygulamayı başlatın: python main.py
+
+## 📊 Sistem Mimarisi
+Proje, backend (mantık) ve ui (arayüz) katmanlarının ayrıldığı modüler bir yapıya sahiptir. Detaylı sınıf diyagramları dökümantasyon klasöründedir.
