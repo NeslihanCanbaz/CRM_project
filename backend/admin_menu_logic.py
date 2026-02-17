@@ -172,12 +172,24 @@ class AdminMenu(QtWidgets.QMainWindow):
         except Exception as e:
             # Beklenmedik bir hata oluşursa programın kapanmasını (crash) önler
             QtWidgets.QMessageBox.critical(self, "Sistem Hatası", f"Mail servisine bağlanırken bir hata oluştu:\n{str(e)}")
+    # def back_to_admin(self):
+    #     """prfAdminMenu ekranına geri döner."""
+    #     print("Geri dönülüyor...")
+    #     if self.parent():
+    #         self.parent().show()  # Ana pencereyi gösterir
+    #     self.close()  # Mevcut pencereyi kapatır
     def back_to_admin(self):
-        """prfAdminMenu ekranına geri döner."""
+        """Admin Preferences (Ana Menü) ekranına geri döner."""
         print("Geri dönülüyor...")
-        if self.parent():
-            self.parent().show()  # Ana pencereyi gösterir
-        self.close()  # Mevcut pencereyi kapatır
+        try:
+            # Ana menü sınıfını buradan tekrar çağırıyoruz
+            from backend.preference_admin_logic import AdminMenu as MainAdminMenu
+            
+            self.main_menu = MainAdminMenu()
+            self.main_menu.show()
+            self.close() # Takvim sayfasını kapatır
+        except Exception as e:
+            print(f"Geri dönüş hatası: {e}")
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
