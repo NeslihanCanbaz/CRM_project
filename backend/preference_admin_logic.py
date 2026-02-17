@@ -1,7 +1,13 @@
 import sys
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
+import os
+# from PySide6.QtCore import *
+# from PySide6.QtGui import *
+# from PySide6.QtWidgets import *
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# PySide6 yerine PyQt6 kullanmalısın
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
 
 
 # --- Dış Dosyalardan Logic Sınıflarını Import Ediyoruz ---
@@ -31,7 +37,7 @@ class Ui_MainWindow(object):
         self.verticalLayout = QVBoxLayout(self.frameAdminMenu)
         self.labelTitle = QLabel("ADMIN SYSTEM")
         self.labelTitle.setStyleSheet("color: #ff9e00; font-weight: bold; font-size: 20px; padding: 10px;")
-        self.labelTitle.setAlignment(Qt.AlignCenter)
+        self.labelTitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.verticalLayout.addWidget(self.labelTitle)
 
         # Butonlar
@@ -71,31 +77,70 @@ class AdminMenu(QMainWindow):
     
        # AdminMenu sınıfının içindeki fonksiyon:
     def go_to_applications(self):
-    # def go_to_applications(self):
-        from py.applications import Ui_ApplicationsPage 
-        from applications_logic import ApplicationsLogic
+    # 'applications_logic' muhtemelen backend klasörü içinde
+    # Bu yüzden import yoluna klasör adını eklemelisin
+        try:
+            from py.applications import Ui_ApplicationsPage 
+            from backend.applications_logic import ApplicationsLogic # 'backend.' ekledik
+        except ImportError:
+            # Eğer dosya backend içinde değil de yanındaysa eski hali kalabilir 
+            # ama genellikle bu hata klasör belirtilmediği için alınır.
+            from applications_logic import ApplicationsLogic
 
-        # QtWidgets.QDialog yerine sadece QDialog yazıyoruz
-        self.application_window = QDialog() 
+        self.application_dialog = QDialog() 
         self.ui_applications = Ui_ApplicationsPage() 
-        self.ui_applications.setupUi(self.application_window) 
+        self.ui_applications.setupUi(self.application_dialog) 
 
-        self.logic = ApplicationsLogic(self.ui_applications) 
-        self.logic.load_and_initialize() 
+        # Logic nesnesini hayatta tutmak için 'self.' ile tanımlıyoruz
+        self.app_logic = ApplicationsLogic(self.ui_applications) 
+        self.app_logic.load_and_initialize() 
 
-        self.application_window.show()
+        self.application_dialog.show()
 
     def go_to_mentor_meeting(self):
-        self.sub_window = MentorInterviewPage()
-        self.sub_window.show()
+        try:
+            # 1. Doğru import yolu (backend klasörü içindeyse başına backend. ekle)
+            from backend.mentor_interview_logic import MentorInterviewWindow
+        except ImportError:
+            # Eğer dosya ana dizindeyse veya sys.path ayarlıysa direkt import et
+            from mentor_interview_logic import MentorInterviewWindow
+
+        # 2. NESNE REFERANSI (Çok Önemli!)
+        # Sadece 'sub_window = ...' dersen fonksiyon bitince pencere kapanır.
+        # 'self.sub_window' diyerek sınıfın bir parçası yapıyoruz.
+        self.mentor_window = MentorInterviewWindow()
+        self.mentor_window.show()
 
     def go_to_interviews(self):
-        self.sub_window = InterviewLogic()
-        self.sub_window.show()
+        try:
+            from py.interview import Ui_Form # Tasarım dosyanın adı interview.py ise
+            from backend.interview_logic import InterviewLogic
+        except ImportError as e:
+            print(f"Import Hatası: {e}")
+            return
+
+        # ÖNEMLİ: self. ile tanımlayarak nesneyi koruyoruz
+        self.interview_dialog = QDialog() 
+        self.ui_interview = Ui_Form() 
+        self.ui_interview.setupUi(self.interview_dialog) 
+
+        # Logic sınıfını hayatta tutmak için 'self.interview_logic' yapıyoruz
+        self.interview_logic = InterviewLogic(self.ui_interview) 
+        self.interview_logic.load_and_initialize() 
+
+        self.interview_dialog.show()
 
     def go_to_admin_settings(self):
-        self.sub_window = AdminSettingsPage()
-        self.sub_window.show()
+        try:
+            # Takvim ve mail işlemlerinin olduğu dosyayı çağırıyoruz
+            from backend.admin_menu_logic import AdminMenu as CalendarPage 
+            
+            # self. koymazsan pencere açılır ve anında kapanır!
+            self.settings_window = CalendarPage() 
+            self.settings_window.show()
+            # Ana menü arkada kalsın istiyorsan self.hide() diyebilirsin
+        except ImportError as e:
+            print(f"Hata: {e}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
