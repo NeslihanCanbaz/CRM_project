@@ -1,155 +1,142 @@
-CRM Projesi(Customer Relationship Management-Müşteri İlişkileri Yönetimi)
-Genel
-Gunumuzde bir cok kurulus verilerini yonetme ve saklama gibi opsiyonlari kismende olsa ucretsiz destekledigi icin Google drive ve bilesenlerini kullanmaktadir. Cesitli organizasyonlar IT alaninda calismak isteyen multeci kokenli kisiler icin mentor gorusmesi ve istenilen sartlari saglayanlar icin projelendirme ve mulakat asamalari dahil olmak uzere bir dizi islem yapmakta ve bu islemleri google drive uzerinde gerceklestirmektedir. Adaylarin takip edilmesi icin drive uzerinde surekli oturumun acik olmasi , excel metinlerin karisikligi ,istenilen verilere kisa yoldan ulasabilme vs gibi zorluklar nedeni ile isleri daha kolay hale getirebilecek kullanici dostu bir uygulama tasarlamak amaciyla asagidaki proje tasarlanmistir.
+# CRM Project (Customer Relationship Management)
+
+## 📋 Overview
+
+Many organizations rely on Google Drive and its components to manage and store data, since it offers free or low-cost tools for this purpose. Various organizations run mentor interviews, project evaluations, and interview processes for candidates from refugee backgrounds interested in working in IT — and manage all of this through Google Drive.
+
+Challenges like needing a constantly open session, messy Excel files, and slow access to the right data made these workflows harder than they needed to be. This project was built to solve that: a user-friendly desktop application that streamlines the whole process.
+
+## 🛠️ Tech Stack
+
+- **Python 3**
+- **PyQt6** — desktop UI
+- **Google Drive / Calendar API** — data sync and event tracking
+- **openpyxl / pandas** — for reading Excel files (see `requirements.txt`)
+
+## 📂 Project Structure
+
+```
+CRM_project/
+├── main.py                  # Application entry point
+├── backend/                 # Business logic (login, mentor, interview, admin operations)
+│   ├── login_logic.py
+│   ├── auth.py
+│   ├── applications_logic.py
+│   ├── mentor_interview_logic.py
+│   ├── interview_logic.py
+│   ├── admin_menu_logic.py
+│   ├── preference_menu_logic.py
+│   ├── preference_admin_logic.py
+│   ├── read_xlsx.py
+│   ├── set_table_data.py
+│   ├── get_events.py
+│   └── download_file.py
+├── py/                      # Screen/window classes
+│   ├── login.py
+│   ├── admin_menu.py
+│   ├── applications.py
+│   ├── mentor_interview.py
+│   ├── interview.py
+│   ├── preference_menu.py
+│   └── preference_admin.py
+├── ui/                      # Qt Designer interface files (.ui)
+│   ├── login.ui
+│   ├── admin_menu.ui
+│   ├── applications.ui
+│   ├── mentor_interview.ui
+│   ├── interview.ui
+│   ├── preference_menu.ui
+│   ├── preference_admin.ui
+│   └── requirements.txt
+├── documents/                # Project documentation
+├── Basvurular.xlsx           # Applications
+├── Kullanicilar.xlsx         # Users
+├── Mentor.xlsx                # Mentor interviews
+└── Mulakatlar.xlsx           # Interviews
+```
 
-Kullanici Arayuzu Detaylari
-Giris Penceresi
+## 🚀 Setup
 
-1-Kullanici Adi ve Sifre
+1. Clone the repository:
 
-google drive ana gmail-hesabi kullanicisi tarafindan kaydedilmis kullanici adi-sifre sahibi kisilerin erisimine izin verilmeli . Bu bilgiler Kullanicilar dosyasında yer almaktadır. Eğer kullanıcının giriş yetkisi Admin’se Tercihler - Admin menüsüne yönlendirmeli, eğer giriş yetkisi User’sa Tercihler menüsüne yönlendirmeli.
+   ```bash
+   git clone https://github.com/NeslihanCanbaz/CRM_project.git
+   cd CRM_project
+   ```
 
-Uygulamaya özelleştirilmiş bir giriş sayfası oluşturulmalı ve bu sayfa asagidaki ozellikleri içermelidir.
+2. Create a virtual environment and install dependencies:
 
-Kullanici adi ve sifre icin iki ayrı input ögesi.
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate   # Windows: venv\Scripts\activate
+   pip install -r ui/requirements.txt
+   ```
 
-Bu iki bilgiye reaksiyon verecek ve sonraki bir giris butonu.
+3. Create a `.env` file (it's excluded via `.gitignore` and not included in the repo) and add your own Google API credentials / environment variables.
 
-Butonun tiklandiginda basarili olup olmadigini bildirecek bir uyari yazisi.
+4. Run the application:
 
-Istege gore uygulamayi kapatacak baska bir buton ekleyip pencere goruntusu kaldırılabilir.
+   ```bash
+   python main.py
+   ```
 
-Tutarli ardalan renkleri, kutu kenar sekilleri, buton ozellikleri (hover, pressed, yuvarlak kenar), yazilar icin farkli fontlar ve renkler kullanarak ozellesmis ve giris penceresi oluşturulmalıdır.
+## 🖥️ User Interface
 
-Ipucu: Once bir frame yerlestirip ogeleri ustune yerlestirerek, hem frame i hem de uzerine yerlestirdiginiz ogeleri layout,spacer kullanarak dinamik boyut olusturabilirsiniz.
+### Login Screen
 
-Tercihler
+Access is granted to users whose username and password were registered by the owner of the main Google Drive/Gmail account. This information is stored in `Kullanicilar.xlsx`.
 
-A-)Tercihler Admin
+- If the user's role is **Admin** → redirected to the *Admin Preferences* menu.
+- If the user's role is **User** → redirected to the *Preferences* menu.
 
-1- Basvurular
+The login screen includes:
+- Separate input fields for username and password
+- A login button with a success/error message
+- An optional exit button
 
-Basvurular butonu admini ilk basvuru penceresine yönlendirmeli
+### Preferences (Admin)
 
-2- Mentor gorusmesi
+- **Applications** — opens the applications list screen
+- **Mentor Interview** — opens the mentor interview screen
+- **Interviews** — opens the interviews screen
+- **Admin Menu** — opens admin operations
 
-Mentor gorusmesi butonu admini mentor penceresine yonlendirmeli
+### Preferences (User)
 
-3- Mulakatlar
+- **Applications**, **Mentor Interview**, **Interviews** screens (no access to the admin menu)
 
-Mulakatlar butonu admini mulakatlar penceresine yonlendirmeli
+### Applications Screen
 
-4- Admin Menü
+- **Search** — search by first/last name (e.g. typing "As" returns all names starting with "As")
+- **All Applications** — lists all records from `Basvurular.xlsx`
+- **Mentor Assigned / Not Assigned** — filters candidates by whether a mentor has been assigned
+- **Duplicate Records** — lists candidates registered more than once with the same name and email
+- **Previous Program Check** — cross-references VIT1/VIT2/Applications files to check whether a candidate applied to more than one program cycle
+- **Unique to One Program** — lists candidates that only appear in VIT1 or VIT2, not both
+- **Deduplicated View** — lists applications with duplicates removed (each name shown once)
 
-Admin butonu admini Admin penceresine yönlendirmeli.
+### Mentor Screen
 
-B-)Tercihler
+- **Search** — search by first/last name
+- **All Interviews** — lists all records from `Mentor.xlsx`
+- **Multi-tab filtering** — shows records filtered by the selected tab/preference
 
-1- Basvurular
+### Interviews Screen
 
-basvurular butonu kullaniciyi ilk basvuru penceresine yonlendirmeli
+- **Search** — search by first/last name
+- **Project Submitted** — filters candidates who submitted their project, based on `Mulakatlar.xlsx`
+- **Project Received** — filters candidates whose project has been received
 
-2- Mentor gorusmesi
+### Admin Menu
 
-mentor gorusmesi butonu kullaniciyi mentor penceresine yonlendirmeli
+- **Event Log** — lists events from Google Drive/Calendar
+- **Mail** — automatically sends emails to addresses registered for calendar events
+- **Table** — displays records pulled from Google Calendar
 
-3- Mulakatlar
+## ⚠️ Security Note
 
-mulakatlar butonu kullaniciyi mulakatlar penceresine yonlendirmeli
+This project uses Google Drive/Calendar API credentials. **Never** commit your `.env` file — it's already listed in `.gitignore`. Keep your credentials local, and rotate them periodically.
 
-Basvurular
+## 🙌 Contributing
 
-1-Ara
-
-text satirina girilen karakterler ile isim soyisimler icinde arama yapabilen bir buton islevi kazandirilmali
-
-(orn: 'As' girisinde drive da kayitli as ile baslayan tum isimleri getirebilmeli)
-
-2-Tum Basvurular
-
-Tum basvurular butonu tiklandiginda driveda bulunan başvurular dosyasındaki kayitli bulunan tum basvurular ekrana getirilmeli
-
-3-Mentor Gorusmesi Tanimlananlar (Basvurular Dosyasındaki ilgili sutun)
-
-Mentor gorusmesi tanimlananlar butonu tiklandiginda, basvuru yaptiktan sonra kendisine mentor gorusmesi tanimlanmis kisiler ekrana getirilmeli
-
-4-Mentor Gorusmesi Tanimlanmayanlar
-
-Mentor gorusmesi tanimlanmayanlar butonu tiklandiginda, basvuru yaptiktan sonra kendisine halen mentor atanmamis olan kisiler ekrana getirilmeli
-
-5- Basvurular Mükerrer Kayıt Butonu
-
-Mükerrer Kayıt Butonu tıklandığında driveda bulunan Basvurular dosyasındaki aynı isim ve mail adresiyle kayıt olan kişiler (sadece tekrar eden adaylar) ekrana getirilmeli.
-
-6- Önceki VIT Kontrol Butonu
-
-Onceki VIT butonu tıklandığında Drive’da kayıtlı olan VIT1, VIT2 ve Başvurular Dosyalarının birinde veya ikisinde ortak olan tüm adayları ekrana getirmeli. (Buradaki amaç da bir adayın birden fazla VIT’e başvurup başvurmadığını görmek).
-
-7- Farklı Kayıt Butonu
-
-Farklı Kayıt Butonu tıklandığında Driveda kayıtlı olan VIT1 ve VIT2 de ortak olmayan adaylar ekrana getirilmeli
-
-8- Basvuru Filtreleme Butonu
-
-Basvuru Filtreleme Butonu tıklandığında Basvurular dosyasında bulunan mükerrer kayıtları almadan, filtreleyerek ekrana getirmeli.(Yani bir isim birden fazla kez kayıt edilmişse, bu kayıt sadece 1 kere ekrana getirilmeli)
-
-(Eğer isterseniz, – 5/6/7/8 – bu seçenekleri QComboBox’la da yapabilirsiniz ayrı ayrı buton koymak yerine.)
-
-9-Tercihler Ekranina Geri Don
-
-Tercihler Ekranina Geri Don butonu tiklandiginda kullanici Tercihler ekranina geri donmeli
-
-Mentor
-
-1-Ara
-
-text satirina girilen karakterler ile isim soyisimler icinde arama yapabilen bir buton islevi kazandirilmali (orn: 'As' girisinde drive da kayitli as ile baslayan tum isimleri getirebilmeli)
-
-2-Tum Gorusmeler
-
-Tum gorusmeler butonu tiklandiginda Mentor dosyasında kayitli tum gorusmeler ekrana getirilmeli
-
-3-Coklu sekme
-
-Bu sekmede secilen tercihe uygun kayitlar ekrana getirilmelidir.
-
-4-Tercihler Ekranina Geri Don
-
-Tercihler Ekranina Geri Don butonu tiklandiginda kullanici Tercihler ekranina geri dönmelidir.
-
-Mulakatlar
-
-1-Ara
-
-text satirina girilen karakterler ile isim soyisimler icinde arama yapabilen bir buton islevi kazandirilmali (orn: 'As' girisinde drive da kayitli as ile baslayan tum isimleri getirebilmeli)
-
-2-Proje Gonderilmis Olanlar (Mulakatlar Dosyasındaki ilgili sutun)
-
-Proje gonderilmis olanlar butonu tiklandiginda Mulakatlar dosyasında kayitli projesi gonderilmis adaylar ekrana getirilmeli
-
-3- Projesi Gelmis Olanlar (Mulakatlar Dosyasındaki ilgili sutun)
-
-Projesi gelmis olanlar butonu tiklandiginda Mulakatlar dosyasında kayitli projesi gelmis adaylar ekrana getirilmeli
-
-4-Tercihler Ekranina Geri Don
-
-Tercihler Ekranina Geri Don butonu tiklandiginda kullanici Tercihler ekranina geri dönmeli
-
-Admin Menü
-
-
-1- Etkinlik Kaydı Butonu
-
-Bu kayıt Google Drive’da bulunan etkinlikleri ekrana getirmelidir
-
-2- Mail Butonu
-
-Bu Buton takvimdeki etkinlikler çekildikten sonra etkinlikte kayıtlı e-mail adreslerine otomatik mail göndermeyi sağlamalıdır.
-
-3- Tablo
-
-Google Takvimde çekilen kayıtların gözükeceği bir tablo.
-
-4-Tercihler-Admin Ekranina Geri Don Butonu
-
-Tercihler-Admin Ekranina Geri Don butonu tiklandiginda admin Tercihler-Admin ekranina geri dönmeli
+Feel free to open an issue or submit a pull request with bug fixes or feature suggestions.
